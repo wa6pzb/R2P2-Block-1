@@ -1,7 +1,8 @@
 # R2P2-Block-1
 Repeatable Retrievable Payload Package (R2P2)  
 
-R2P2 is a TeensyLC based High Alititude Balloon Payload. The block 1 software is planned to have the following:
+R2P2 is a TeensyLC based High Alititude Balloon Payload. 
+The block 1 software is planned to have these cabilities:
 
 Block 1 Capabilities
 --------------------
