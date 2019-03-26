@@ -8,7 +8,7 @@ Block 1 Capabilities
 - 100 gram package weight
 - 3 hour flight time with 5 hour run time
 - Audable Beep sounder
-- Report 10 digit grid location
+- Report 10 digit maidenhead grid location
 - Report Altitude
 - Report battery voltage
 - Cut-down by
