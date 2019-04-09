@@ -1,0 +1,43 @@
+Reusable Recoverable Payload Package (R2P2)
+
+Telemetry Format
+
+Date: 01/24/2019
+
+Author: Dan Matyja WA6PZB
+
+This uses FT8 15 second frames with 13 characters maximum.
+The full telemetry cycle will be four (4) frames to convey
+callsign ID, payload name, position, altitude, ground speed, 
+and three other analog values plus 8 bits of binary flags.
+
+Example:
+
+WA6PZB R2P2    
+^^^^^^^^^^^^^  - Frame 1  Callsign and payload name
+
+A01DM03XS56BC    
+^^^^^^^^^^^^^  - Frame 2 Telemetry channel A
+                        The letter “A” followed by a 2 digit 
+                        hex sequence number then the 10 digit
+                        maidenhead grid locator
+
+B01aaaaavvvFF    
+^^^^^^^^^^^^^  - Frame 3 Telemetry channel B
+                        The letter “B” followed by the same 2
+                        digit sequence number that all frames in
+                        this cycle use then 5 digits for altitude 
+                        and 3 digits for ground speed. Altitude            
+                        and speed are fixed width decimal values 
+                        with leading zero padding if needed. The
+                        last 2 digits is the hex value of the 
+                        8 binary flags with leading zero if  
+                        needed.
+C01xxxyyyzzz    
+^^^^^^^^^^^^^  - Frame 4 Telemetry Channel C
+                        The letter “C” followed by the same 2
+                        digit sequence number that all frames in
+                        in this cycle use then three (3) groups of 
+                        3 digit decimal analog values padded with      
+                        zeros to maintain fixed width.
+
