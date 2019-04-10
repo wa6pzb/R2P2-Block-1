@@ -1,0 +1,30 @@
+Block 1
+--------------------
+- 100 gram package weight
+- 3 hour flight time with 5 hour run time
+- Audable Beep sounder
+- Report 10 digit grid location
+- Report Altitude
+- Report battery voltage
+- Cut-down by
+  - Mission Timer elapsed
+  - Altitude threshold
+
+Block 2
+--------------------
+- Field Programable via EEPROM Monitor
+  - Set call sign
+  - Set cut-down parameters
+- Advance Telemetry
+  - Report 10 digit grid location
+  - Report Altitude
+  - Report battery voltage
+  - In/Out Temperature
+  - package atitude (invert sensor)
+- Power Control
+  - GPS
+  - Si5351
+- Cut-down by
+  - Mission Timer elapsed
+  - Altitude threshold
+  - Geofence parameters
