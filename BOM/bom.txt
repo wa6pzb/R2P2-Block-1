@@ -1,1 +1,18 @@
-# This file to contain the R2P2 parts list
+# R2P2 parts list
+
+Parts List
+----------
+
+Block 1
+-Nichrome wire for cutdown (36 gauge) - Amazon (AZ)
+-GPS NEO-7M-000 - eBay
+-10 meter LPF - QRPLabs
+-Teensy LC - PRODUCT ID: 2419 - AF
+-Polyamide Tape - PRODUCT ID: 3057 - AF
+-Li-ion 400 mah battery and connector - PRODUCT ID: 3898/1862 - AF
+-Li-ion charger - PRODUCT ID: 1905 - AF
+-Si5351 clock generator - PRODUCT ID: 2045 - AF
+
+Block 2
+-TMPS36 Temp sensors - PRODUCT ID: 165 - Adafruit (AF)
+-Tilt sensors - PRODUCT ID: 173 - AF
