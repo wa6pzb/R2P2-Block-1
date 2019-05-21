@@ -6,6 +6,11 @@ Block 1
 - Report 10 digit grid location
 - Report Altitude
 - Report battery voltage
+- Report binary flags for
+  - LOCK if GPS is seeing > 3 satelites
+  - ARM if Mission Time or Altitude exceeded
+  - PYRO if pyro has been triggered after ARM
+  - INVERT sensor for position (UP normal, INVERT after cutdown)
 - Cut-down by
   - Mission Timer elapsed
   - Altitude threshold
@@ -20,7 +25,11 @@ Block 2
   - Report Altitude
   - Report battery voltage
   - In/Out Temperature
-  - package atitude (invert sensor)
+  - Report binary flags for
+    - LOCK if GPS is seeing > 3 satelites
+    - ARM if Mission Time or Altitude exceeded
+    - PYRO if pyro has been triggered after ARM
+    - INVERT sensor for position (UP normal, INVERT after cutdown)
 - Power Control
   - GPS
   - Si5351
