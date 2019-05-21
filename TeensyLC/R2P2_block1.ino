@@ -1,11 +1,14 @@
 /*
- * Block 1 - Build 015
- * TeensyLC R2P2
- * Repeatable Recoverable Payload Package
- * 
- * WA6PZB - 02/25/2019
- *
- */
+   Block 1 - Build 018
+   TeensyLC R2P2
+   Repeatable Recoverable Payload Package
+
+   WA6PZB - 02/25/2019
+
+   5/20/2019 - Modified battVoltage section for actual voltage with no decimal point (divide by 100)
+             - Serial debug printing integer GPS altitude in meters
+
+*/
 
 #include <TimeLib.h>
 #include <TinyGPS.h>
@@ -34,19 +37,22 @@ const int tonePin = 14;						// Pin 14 on TeensyLC for tone device
 Si5351 si5351;
 JTEncode jtencode;
 
-TinyGPS gps; 
+TinyGPS gps;
 
 // Global variables for JTEncode
 unsigned long freq;
 char message[] = "B01AAAAAVVVFF";
-char grid[] = "AAAAAAAAAAAAA";
-char volt[] = "1234567890";
 
 uint8_t tx_buffer[255];
-
 uint8_t symbol_count;
 uint16_t tone_delay, tone_spacing;
 
+// General global variables
+char grid[] = "AAAAAAAAAAAAA";  // gridPrint char array
+char volt[] = "1234567890";     // battVoltage char array
+int missionTime = 14;            // initial mission time (normally 0)
+char missionTime_chr[] = "FFFF";
+char missionTime_chr2[] = "FFFF";
 
 
 HardwareSerial Uart = HardwareSerial();
@@ -67,7 +73,7 @@ void setup()
   //while (!Serial) ; // Needed for Leonardo only
   Uart.begin(9600);
   //Serial.println("Waiting for GPS time ... ");
-  
+
   // Initialize the Si5351
   // Change the 2nd parameter in init if using a ref osc other
   // than 25 MHz
@@ -81,20 +87,20 @@ void setup()
 
   // Set the proper frequency, tone spacing, symbol count, and
   // tone delay depending on mode
-  
-     
-      freq = FT8_DEFAULT_FREQ;
-      symbol_count = FT8_SYMBOL_COUNT; // From the library defines
-      tone_spacing = FT8_TONE_SPACING;
-      tone_delay = FT8_DELAY;
 
-    
+
+  freq = FT8_DEFAULT_FREQ;
+  symbol_count = FT8_SYMBOL_COUNT; // From the library defines
+  tone_spacing = FT8_TONE_SPACING;
+  tone_delay = FT8_DELAY;
+
+
 
   // Set CLK0 output
   si5351.drive_strength(SI5351_CLK0, SI5351_DRIVE_8MA); // Set for max power if desired
   si5351.output_enable(SI5351_CLK0, 0); // Disable the clock initially
 
- // Setup to read TeensyLC Vcc battery voltage
+  // Setup to read TeensyLC Vcc battery voltage
   //analogReference(DEFAULT);
   analogReadResolution(10);
   //analogReadAveraging(32);
@@ -109,7 +115,7 @@ void loop()
   while (Uart.available()) {
     if (gps.encode(Uart.read())) { // process gps messages
       // when TinyGPS reports new data...
- 
+
       unsigned long age;
       int Year;
       byte Month, Day, Hour, Minute, Second;
@@ -122,27 +128,55 @@ void loop()
       }
     }
   }
-  if (timeStatus()!= timeNotSet) {
-    if (second()==0) {
-	  alertTone();
-	  strcpy(message, "WA6PZB HAB\0");
-	  set_tx_buffer();          // Encode the message in the transmit buffer
-	  encode();
-	}
-	if (second()==15 ) {
+
+  //convert missionTime to char array
+  String missionTime_str = String(missionTime, HEX);
+  missionTime_str.toCharArray(missionTime_chr, 4);
+
+  //add leading zero for single digit hex values
+  if (missionTime < 16) {
+    strcpy(missionTime_chr2, "0");
+    strcat(missionTime_chr2, missionTime_chr);
+  }
+  else {
+    strcpy(missionTime_chr2, missionTime_chr);
+  }
+  Serial.println(missionTime_chr2);    // Debug - missionTime in hex
+
+  if (timeStatus() != timeNotSet) {
+    if (second() == 0) {
+      //delay(1400);
+      alertTone();
+      strcpy(message, "WA6PZB HAB\0");
+      set_tx_buffer();          // Encode the message in the transmit buffer
+      encode();
+    }
+    if (second() == 15 ) {
+      //delay(1400);
       alertTone();
       char *grid = gridPrint();
-	  strcpy(message, grid);
-	  set_tx_buffer();          // Encode the message in the transmit buffer
-	  encode();
+      strcpy(message, "A");
+      strcat(message, missionTime_chr2);
+      strcat(message, grid);
+      set_tx_buffer();          // Encode the message in the transmit buffer
+      encode();
     }
-	if (second()==30 ) {
+    if (second() == 30 ) {
+      //delay(1400);
       alertTone();
       char *volt = battVoltage();
-	  strcpy(message, volt);
-	  set_tx_buffer();          // Encode the message in the transmit buffer
-	  encode();
-	}
+      strcpy(message, "B");
+      strcat(message, missionTime_chr2);
+      strcat(message, volt);
+      strcat(message, "00030FF"); // Test filler string for altitude and hex flags
+      set_tx_buffer();          // Encode the message in the transmit buffer
+      encode();
+    }
+    if (second() == 45 ) {
+      //delay(1400);
+      alertTone();
+      missionTime++;
+    }
   }
 }
 
