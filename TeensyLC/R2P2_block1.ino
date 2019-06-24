@@ -1,5 +1,5 @@
 /*
-   Block 1 - Build 018
+   Block 1 - Build 019
    TeensyLC R2P2
    Repeatable Recoverable Payload Package
 
@@ -7,7 +7,7 @@
 
    5/20/2019 - Modified battVoltage section for actual voltage with no decimal point (divide by 100)
              - Serial debug printing integer GPS altitude in meters
-
+   6/23/2019 - Added altitude function and calling in "B" telemetry slot
 */
 
 #include <TimeLib.h>
@@ -50,6 +50,7 @@ uint16_t tone_delay, tone_spacing;
 // General global variables
 char grid[] = "AAAAAAAAAAAAA";  // gridPrint char array
 char volt[] = "1234567890";     // battVoltage char array
+char alt[] = "12345";           // altitude char array
 int missionTime = 14;            // initial mission time (normally 0)
 char missionTime_chr[] = "FFFF";
 char missionTime_chr2[] = "FFFF";
@@ -168,7 +169,8 @@ void loop()
       strcpy(message, "B");
       strcat(message, missionTime_chr2);
       strcat(message, volt);
-      strcat(message, "00030FF"); // Test filler string for altitude and hex flags
+      char *alt = altitude();
+      strcat(message, alt); // add altitude char array
       set_tx_buffer();          // Encode the message in the transmit buffer
       encode();
     }
