@@ -1,5 +1,5 @@
 /*
-   Block 1 - Build 019
+   Block 1 - Build 020
    TeensyLC R2P2
    Repeatable Recoverable Payload Package
 
@@ -7,7 +7,8 @@
 
    5/20/2019 - Modified battVoltage section for actual voltage with no decimal point (divide by 100)
              - Serial debug printing integer GPS altitude in meters
-   6/23/2019 - Added altitude function and calling in "B" telemetry slot
+   6/23/2019 - 019: added altitude function and calling in "B" telemetry slot
+   6/25/2019 - 020: added character array terminator for altitude and the status flag variable
 */
 
 #include <TimeLib.h>
@@ -55,6 +56,7 @@ int missionTime = 14;            // initial mission time (normally 0)
 char missionTime_chr[] = "FFFF";
 char missionTime_chr2[] = "FFFF";
 
+int statusFlags = 0;             // initial status flags all clear
 
 HardwareSerial Uart = HardwareSerial();
 
