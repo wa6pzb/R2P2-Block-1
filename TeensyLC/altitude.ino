@@ -34,5 +34,6 @@ char *altitude() {
   }
   Serial.println(alt_c);
   Serial.println(alt_c2);
+  alt_c2[5] = '\0'; 
   return alt_c2;
 }
