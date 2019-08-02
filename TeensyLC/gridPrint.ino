@@ -2,7 +2,7 @@ char *gridPrint() {
     float flat, flon;
     unsigned long age;
     gps.f_get_position(&flat, &flon, &age);
-    Serial.print("LAT=");
+    Serial.print(" LAT=");
     Serial.print(flat == TinyGPS::GPS_INVALID_F_ANGLE ? 0.0 : flat, 6);
     Serial.print(" LON=");
     Serial.print(flon == TinyGPS::GPS_INVALID_F_ANGLE ? 0.0 : flon, 6);
@@ -13,6 +13,7 @@ char *gridPrint() {
     Serial.print(gps.hdop() == TinyGPS::GPS_INVALID_HDOP ? 0 : gps.hdop());
     Serial.print(" ALT=");
     Serial.print(gps.altitude()/100); // Altitude in centimeters - divide by 100 to get meters
+
     
 
     double lat, lon, lat1, lon1;                                 // GPS variables
