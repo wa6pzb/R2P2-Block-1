@@ -1,5 +1,5 @@
 /*
-   Block 1 - Build 020
+   Block 1 - Build 022
    TeensyLC R2P2
    Repeatable Recoverable Payload Package
 
@@ -9,6 +9,8 @@
              - Serial debug printing integer GPS altitude in meters
    6/23/2019 - 019: added altitude function and calling in "B" telemetry slot
    6/25/2019 - 020: added character array terminator for altitude and the status flag variable
+   7/11/2019 - 021: added gps fix bit to statusFlags
+   8/01/2019 - 022: modified gps fix section and cleaned up debug serial logging
 */
 
 #include <TimeLib.h>
@@ -53,6 +55,7 @@ char grid[] = "AAAAAAAAAAAAA";  // gridPrint char array
 char volt[] = "1234567890";     // battVoltage char array
 char alt[] = "12345";           // altitude char array
 int missionTime = 14;            // initial mission time (normally 0)
+int gpsAge = 0;
 char missionTime_chr[] = "FFFF";
 char missionTime_chr2[] = "FFFF";
 
@@ -124,6 +127,21 @@ void loop()
       byte Month, Day, Hour, Minute, Second;
 
       gps.crack_datetime(&Year, &Month, &Day, &Hour, &Minute, &Second, NULL, &age);
+
+      gpsAge = age;
+      /*
+        if (gps.satellites() > 3 && age < 17000) {
+        bitSet(statusFlags, 0);
+        }
+        else {
+        bitClear(statusFlags, 0);
+        }
+        Serial.print(" FIX=");
+        Serial.println(statusFlags); // Age
+        Serial.println(missionTime_chr2);    // Debug - missionTime in hex
+      */
+
+
       if (age < 500) {
         // set the Time to the latest GPS reading
         setTime(Hour, Minute, Second, Day, Month, Year);
@@ -144,11 +162,18 @@ void loop()
   else {
     strcpy(missionTime_chr2, missionTime_chr);
   }
-  Serial.println(missionTime_chr2);    // Debug - missionTime in hex
+
+  //Serial.println(missionTime_chr2);    // Debug - missionTime in hex
 
   if (timeStatus() != timeNotSet) {
     if (second() == 0) {
       //delay(1400);
+
+      Serial.println("FRAME 1");
+      Serial.print(" MissionTime=");
+      Serial.println(missionTime_chr2);    // Debug - missionTime in hex
+
+
       alertTone();
       strcpy(message, "WA6PZB HAB\0");
       set_tx_buffer();          // Encode the message in the transmit buffer
@@ -156,6 +181,11 @@ void loop()
     }
     if (second() == 15 ) {
       //delay(1400);
+
+      Serial.println("FRAME 2");
+      Serial.print(" MissionTime=");
+      Serial.println(missionTime_chr2);    // Debug - missionTime in hex
+
       alertTone();
       char *grid = gridPrint();
       strcpy(message, "A");
@@ -166,6 +196,22 @@ void loop()
     }
     if (second() == 30 ) {
       //delay(1400);
+
+      Serial.println("FRAME 3");
+      Serial.print(" MissionTime=");
+      Serial.println(missionTime_chr2);    // Debug - missionTime in hex
+      Serial.print(" AGE=");
+      Serial.println(gpsAge); // Age
+
+      if (gps.satellites() >= 3 && gpsAge < 500) {
+        bitSet(statusFlags, 0);
+      }
+      else {
+        bitClear(statusFlags, 0);
+      }
+      Serial.print(" FIX=");
+      Serial.println(statusFlags);
+
       alertTone();
       char *volt = battVoltage();
       strcpy(message, "B");
@@ -178,10 +224,14 @@ void loop()
     }
     if (second() == 45 ) {
       //delay(1400);
+
+      Serial.println("FRAME 4");
+      Serial.print(" MissionTime=");
+      Serial.println(missionTime_chr2);    // Debug - missionTime in hex
+
       alertTone();
       missionTime++;
     }
   }
 }
-
 
