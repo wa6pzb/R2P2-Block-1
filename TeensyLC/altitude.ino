@@ -4,7 +4,7 @@ char *altitude() {
   char alt_c2[6];
   // get altitude
   gps_alt = (gps.altitude() / 100);
-  Serial.println(gps_alt);
+  //Serial.println(gps_alt); // raw altitude
   //convert to char array
   String alt_str = String(gps_alt, DEC);
   alt_str.toCharArray(alt_c, 6);
@@ -32,7 +32,8 @@ char *altitude() {
       strcat(alt_c2, alt_c);
       break;          
   }
-  Serial.println(alt_c);
+  //Serial.println(alt_c); //unpadded char array
+  Serial.print("ALT=");
   Serial.println(alt_c2);
   alt_c2[5] = '\0'; 
   return alt_c2;
