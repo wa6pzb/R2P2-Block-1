@@ -1,7 +1,14 @@
+/*
+
+   9/09/2019 - 025: static declaration of alt_c2[]
+ */
+
+
+
 char *altitude() {
   int gps_alt;
   char alt_c[6];
-  char alt_c2[6];
+  static char alt_c2[6];
   // get altitude
   gps_alt = (gps.altitude() / 100);
   //Serial.println(gps_alt); // raw altitude
@@ -10,7 +17,7 @@ char *altitude() {
   alt_str.toCharArray(alt_c, 6);
   switch (gps_alt) {
     case -9999 ... 0:
-      strcpy(alt_c2, "0000Z"); // negative or zero altitude
+      strcpy(alt_c2, "00000"); // negative or zero altitude ALL BALLS
       break;    
     case 1 ... 9:
       strcpy(alt_c2, "0000");
@@ -33,7 +40,7 @@ char *altitude() {
       break;          
   }
   //Serial.println(alt_c); //unpadded char array
-  Serial.print("ALT=");
+  Serial.print(" ALT=");
   Serial.println(alt_c2);
   alt_c2[5] = '\0'; 
   return alt_c2;
