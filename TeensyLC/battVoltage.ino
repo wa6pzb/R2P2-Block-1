@@ -1,8 +1,15 @@
+/*
+
+   9/09/2019 - 025: static declaration of battvc[]
+
+ */
+
+
 char *battVoltage() {
   int vread;
   float volt;
   int battv;
-  char battvc[12];
+  static char battvc[12];
   analogReadAveraging(32);
   vread = analogRead(1);
   //Serial.println(vread);  // raw reading
@@ -11,7 +18,7 @@ char *battVoltage() {
   //convert to char array
   String volt_str = String(battv, DEC);
   volt_str.toCharArray(battvc, 4);
-  Serial.print( "BATT=");
+  Serial.print( " BATT=");
   Serial.println(battvc);
   return battvc;
 }
