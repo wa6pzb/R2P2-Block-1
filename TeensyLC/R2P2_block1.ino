@@ -1,5 +1,5 @@
 /*
-   Block 1 - Build 024
+   Block 1 - Build 025
    TeensyLC R2P2
    Repeatable Recoverable Payload Package
 
@@ -13,6 +13,7 @@
    8/01/2019 - 022: modified gps fix section and cleaned up debug serial logging
    8/02/2019 - 023: ARM and PYRO bits and logic
    9/08/2019 - 024: add statusFlags char array and sending in "B" telemetry slot
+   9/09/2019 - 025: TX delay for 1.4 early issue, static declares added in functions to be safe
 */
 
 #include <TimeLib.h>
@@ -170,7 +171,7 @@ void loop()
 
   if (timeStatus() != timeNotSet) {
     if (second() == 0) {
-      //delay(1400);
+      delay(1400); // clock delay
 
       Serial.println("FRAME 1");
       Serial.print(" MissionTime=");
@@ -207,7 +208,7 @@ void loop()
       encode();
     }
     if (second() == 15 ) {
-      //delay(1400);
+      delay(1400);
 
       Serial.println("FRAME 2");
       Serial.print(" MissionTime=");
@@ -222,7 +223,7 @@ void loop()
       encode();
     }
     if (second() == 30 ) {
-      //delay(1400);
+      delay(1400);
 
       Serial.println("FRAME 3");
       Serial.print(" MissionTime=");
@@ -254,7 +255,7 @@ void loop()
       encode();
     }
     if (second() == 45 ) {
-      //delay(1400);
+      delay(1400);
 
       Serial.println("FRAME 4");
       Serial.print(" MissionTime=");
@@ -265,4 +266,5 @@ void loop()
     }
   }
 }
+
 
