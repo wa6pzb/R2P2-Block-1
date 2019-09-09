@@ -1,5 +1,5 @@
 /*
-   Block 1 - Build 022
+   Block 1 - Build 024
    TeensyLC R2P2
    Repeatable Recoverable Payload Package
 
@@ -11,6 +11,8 @@
    6/25/2019 - 020: added character array terminator for altitude and the status flag variable
    7/11/2019 - 021: added gps fix bit to statusFlags
    8/01/2019 - 022: modified gps fix section and cleaned up debug serial logging
+   8/02/2019 - 023: ARM and PYRO bits and logic
+   9/08/2019 - 024: add statusFlags char array and sending in "B" telemetry slot
 */
 
 #include <TimeLib.h>
@@ -58,6 +60,8 @@ int missionTime = 14;            // initial mission time (normally 0)
 int gpsAge = 0;
 char missionTime_chr[] = "FFFF";
 char missionTime_chr2[] = "FFFF";
+char statusFlags_chr[] = "FFFF";
+char statusFlags_chr2[] = "FFFF";
 
 int statusFlags = 0;             // initial status flags all clear
 
@@ -163,7 +167,6 @@ void loop()
     strcpy(missionTime_chr2, missionTime_chr);
   }
 
-  //Serial.println(missionTime_chr2);    // Debug - missionTime in hex
 
   if (timeStatus() != timeNotSet) {
     if (second() == 0) {
@@ -173,6 +176,30 @@ void loop()
       Serial.print(" MissionTime=");
       Serial.println(missionTime_chr2);    // Debug - missionTime in hex
 
+
+      if ( bitRead(statusFlags, 1) ) {
+        bitSet(statusFlags, 2); // set the PYRO bit flag if ARM bit is set
+      }
+      // Cutdown will be ARMed  for 3 cycles at missionTime of 18,19, and 20
+      if (missionTime >= 18 && missionTime <= 20) {
+        bitSet(statusFlags, 1); // set the ARM bit flag
+      }
+      else {
+        bitClear(statusFlags, 1); // unset the ARM bit flag
+      }
+
+      //convert statusFlags to char array
+      String statusFlags_str = String(statusFlags, HEX);
+      statusFlags_str.toCharArray(statusFlags_chr, 4);
+
+      //add leading zero for single digit hex values
+      if (statusFlags < 16) {
+        strcpy(statusFlags_chr2, "0");
+        strcat(statusFlags_chr2, statusFlags_chr);
+      }
+      else {
+        strcpy(statusFlags_chr2, statusFlags_chr);
+      }
 
       alertTone();
       strcpy(message, "WA6PZB HAB\0");
@@ -204,13 +231,15 @@ void loop()
       Serial.println(gpsAge); // Age
 
       if (gps.satellites() >= 3 && gpsAge < 500) {
-        bitSet(statusFlags, 0);
+        bitSet(statusFlags, 0); // set the FIX bit flag
       }
       else {
         bitClear(statusFlags, 0);
       }
-      Serial.print(" FIX=");
-      Serial.println(statusFlags);
+      Serial.print(" FLAGS=");
+      Serial.print(statusFlags_chr2);
+      Serial.print(" , ");
+      Serial.println(statusFlags, BIN);
 
       alertTone();
       char *volt = battVoltage();
@@ -219,6 +248,8 @@ void loop()
       strcat(message, volt);
       char *alt = altitude();
       strcat(message, alt); // add altitude char array
+      statusFlags_chr2[2] = '\0'; // force array end at 2 characters
+      strcat(message, statusFlags_chr2); // add two digit hex statusFlags
       set_tx_buffer();          // Encode the message in the transmit buffer
       encode();
     }
