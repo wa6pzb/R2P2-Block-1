@@ -5,3 +5,5 @@ R2P2 is a TeensyLC based High Alititude Balloon Payload.
 
 This section will contain the schmatic and basic documentation.
 
+Schmatics are generated with https://www.digikey.com/schemeit
+
