@@ -5,6 +5,8 @@
 # Integrated with Node-Red via Files
 #
 # WA6PZB 4/20/2019 - R2P2 Block 1
+# 09/07/2020 - Modify for WSJT-X v2.2 - frame, ftime columns 
+# 09/07/2020 - Added parsing for altitude to b2 file and non-hex seq file check
 #
 
 
@@ -37,20 +39,26 @@ while true; do
 	
 	if [ "$sync" == "$start" ];then
 		#frame=`tail -n1 /cygdrive/c/temp/logreader/log|cut -c25-37`
-		frame=`tail -n1 /cygdrive/n/Local/WSJT-X/ALL.txt|cut -c25-37`
+		#frame=`tail -n1 /cygdrive/n/Local/WSJT-X/ALL.txt|cut -c25-37`
+                frame=`tail -n1 /cygdrive/n/Local/WSJT-X/ALL.txt|cut -c49-61`
 		
-		ftime=`tail -n1 /cygdrive/n/Local/WSJT-X/ALL.txt|cut -c1-6`
+		ftime=`tail -n1 /cygdrive/n/Local/WSJT-X/ALL.txt|cut -c8-13`
 		echo $ftime>/cygdrive/c/temp/logreader/ftime
 		
 		type=`echo $frame|cut -c1`
 		seq=`echo $frame|cut -c2-3`
 		
+                if ! [[ $seq =~ ^[0-9A-Fa-f]{1,}$ ]] ;then
+                       echo -e " E \c"
+                       seq=`echo 00`
+                fi
 
 		
 		if [ "$type" == "A" ];then			
 			grid=`echo $frame|cut -c4-13`
 			echo -e " g \c"
-			
+
+			#Put grid location in a1 file
 			echo $grid>/cygdrive/c/temp/logreader/a1
 			
 			#Put frame seq number (flight minutes) in seq file
@@ -59,9 +67,11 @@ while true; do
 		
 		if [ "$type" == "B" ];then
 			b1=`echo $frame|cut -c4-6`
+                        b2=`echo $frame|cut -c7-11`
 			echo -e " b \c"
 				
 			echo $b1>/cygdrive/c/temp/logreader/b1
+                        echo $b2>/cygdrive/c/temp/logreader/b2
 			#echo -e " B frame end\c"
 				
 			echo $stop>/cygdrive/c/temp/logreader/sync
@@ -95,3 +105,5 @@ while true; do
 	sleep 1
 
 done
+
+
